@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { SignOutButton } from '@clerk/nextjs';
+import { DoorOpen } from 'lucide-react';
 
 const NavbarRoutes = () => {
   const path = usePathname();
@@ -16,7 +17,7 @@ const NavbarRoutes = () => {
     <div className="flex gap-x-2 ml-auto">
       {isTeacherpage || isPlayerpage ? (
         <SignOutButton redirectUrl="/">
-          <Button>Exit </Button>
+          <Button><DoorOpen className='mr-2' /> Exit </Button>
         </SignOutButton>
       ) : (
         <Link href="/teacher/courses">
