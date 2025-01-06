@@ -22,7 +22,7 @@ import {
 interface ComboboxProps {
   options: { label: string; value: string }[];
   value?: string;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
 }
 
 export function ComboboxDemo({ options, value, onChange }: ComboboxProps) {
@@ -35,7 +35,7 @@ export function ComboboxDemo({ options, value, onChange }: ComboboxProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between"
         >
           {value
             ? options.find((option) => option.value === value)?.label
