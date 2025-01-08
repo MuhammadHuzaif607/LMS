@@ -8,6 +8,87 @@ const { video } = new Mux({
   tokenSecret: process.env.MUX_TOKEN_SECRET,
 });
 
+export async function DELETE(
+  req: Request,
+  { params }: { params: { courseId: string; chapterId: string } }
+) {
+  try {
+    const { userId } = await auth();
+    const { courseId, chapterId } = await params;
+    if (!userId) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const courseOwner = await db.course.findUnique({
+      where: {
+        id: courseId,
+        userId,
+      },
+    });
+
+    if (!courseOwner) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const chapter = await db.chapter.findUnique({
+      where: {
+        id: chapterId,
+        courseId,
+      },
+    });
+
+    if (!chapter) {
+      return new NextResponse('No Chapter Found', { status: 404 });
+    }
+
+    if (chapter.videoUrl) {
+      const exisitingMuxData = await db.muxData.findFirst({
+        where: {
+          chapterId,
+        },
+      });
+
+      if (exisitingMuxData) {
+        await video.assets.delete(exisitingMuxData.assetId);
+        await db.muxData.delete({
+          where: {
+            id: exisitingMuxData.id,
+          },
+        });
+      }
+    }
+
+    const deletedchapter = await db.chapter.delete({
+      where: {
+        id: chapterId,
+      },
+    });
+
+    const publishedChaptersInCourses = await db.chapter.findMany({
+      where: {
+        id: courseId,
+        isPublished: true,
+      },
+    });
+
+    if (publishedChaptersInCourses.length === 0) {
+      await db.course.update({
+        where: {
+          id: courseId,
+        },
+        data: {
+          isPublished: false,
+        },
+      });
+    }
+
+    return NextResponse.json(deletedchapter);
+  } catch (err) {
+    console.log('COURSE_CHAPTER_ID_DELETE', err);
+    return new NextResponse('Internal Server error', { status: 500 });
+  }
+}
+
 export async function PATCH(
   req: Request,
   { params }: { params: { courseId: string; chapterId: string } }

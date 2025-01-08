@@ -1,6 +1,11 @@
 'use client';
-import React, { useState, useRef, useMemo } from 'react';
-import JoditEditor from 'jodit-react';
+import React, { useRef, useMemo } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import JoditEditor with SSR disabled
+const JoditEditor = dynamic(() => import('jodit-react'), {
+  ssr: false,
+});
 
 interface EditorFormProps {
   description: string | null;
@@ -17,11 +22,11 @@ export default function EditorForm({
 }: EditorFormProps) {
   const editor = useRef(null);
 
-  // Instead of using internal state, rely on the value from props
+  // Memoize the editor config to avoid re-creating on each render
   const config = useMemo(
     () => ({
       readonly: false,
-      placeholder: 'Start typing...',
+      placeholder: placeholder || 'Start typing...',
     }),
     [placeholder]
   );

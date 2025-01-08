@@ -82,7 +82,7 @@ const Chapters_list = ({ items, onReOrder, onEdit }: ChaptersListProps) => {
                       className={cn(
                         'px-2 py-3 border-r border-r-slate-2000 hover:bg-slate-300 border-l-md transition-all',
                         chapter.isPublished &&
-                          'border-r-sky-200 hover:bg-sky-200'
+                          'border-r-sky-200 hover:bg-sky-200 '
                       )}
                       {...provided.dragHandleProps}
                     >
@@ -94,7 +94,7 @@ const Chapters_list = ({ items, onReOrder, onEdit }: ChaptersListProps) => {
                       <Badge
                         className={cn(
                           'bg-slate-500',
-                          chapter.isPublished && 'bg-sky-200'
+                          chapter.isPublished && 'bg-sky-700 hover:bg-sky-400'
                         )}
                       >
                         {chapter.isPublished ? 'Published' : 'Draft'}
