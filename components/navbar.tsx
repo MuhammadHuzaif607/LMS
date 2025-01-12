@@ -6,6 +6,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { SignOutButton } from '@clerk/nextjs';
 import { DoorOpen } from 'lucide-react';
+import Search_input from './search-input';
 
 const NavbarRoutes = () => {
   const path = usePathname();
@@ -13,21 +14,29 @@ const NavbarRoutes = () => {
 
   const isTeacherpage = path.startsWith('/teacher');
   const isPlayerpage = path.includes('/chapter');
+  const isSearchPage = path.includes('/search');
   return (
-    <div className="flex gap-x-2 ml-auto">
-      {isTeacherpage || isPlayerpage ? (
-        <SignOutButton redirectUrl="/">
-          <Button><DoorOpen className='mr-2' /> Exit </Button>
-        </SignOutButton>
-      ) : (
-        <Link href="/teacher/courses">
-          <Button size="sm" variant="ghost">
-            Teacher Mode
-          </Button>
-        </Link>
-      )}
-      <UserButton />
-    </div>
+    <>
+      {isSearchPage && <div className="hidden md:block">
+        <Search_input/>
+        </div>}
+      <div className="flex gap-x-2 ml-auto">
+        {isTeacherpage || isPlayerpage ? (
+          <SignOutButton redirectUrl="/">
+            <Button>
+              <DoorOpen className="mr-2" /> Exit{' '}
+            </Button>
+          </SignOutButton>
+        ) : (
+          <Link href="/teacher/courses">
+            <Button size="sm" variant="ghost">
+              Teacher Mode
+            </Button>
+          </Link>
+        )}
+        <UserButton />
+      </div>
+    </>
   );
 };
 
