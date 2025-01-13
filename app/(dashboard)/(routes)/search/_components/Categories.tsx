@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fc';
 import { IconType } from 'react-icons/lib';
 import CategoryItem from './Category_item';
+import Search_input from '@/components/search-input';
 
 interface Categoriesprops {
   items: Category[];
@@ -27,16 +28,18 @@ const iconMap: Record<Category['name'], IconType> = {
 };
 const Categories = ({ items }: Categoriesprops) => {
   return (
-    <div className="flex items-center gap-x-2 pb-2 overflow-x-auto">
-      {items.map((item) => (
-        <CategoryItem
-          key={item.id}
-          label={item.name}
-          icon={iconMap[item.name]}
-          value={item.id}
-        />
-      ))}
-    </div>
+    <>
+      <div className="flex items-center gap-x-2 pb-2 overflow-x-auto">
+        {items.map((item) => (
+          <CategoryItem
+            key={item.id}
+            label={item.name}
+            icon={iconMap[item.name]}
+            value={item.id}
+          />
+        ))}
+      </div>
+    </>
   );
 };
 

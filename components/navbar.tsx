@@ -13,7 +13,7 @@ const NavbarRoutes = () => {
   const router = useRouter();
 
   const isTeacherpage = path.startsWith('/teacher');
-  const isPlayerpage = path.includes('/chapter');
+  const isPlayerpage = path.includes('/courses');
   const isSearchPage = path.includes('/search');
   return (
     <>
