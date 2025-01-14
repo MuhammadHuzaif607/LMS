@@ -14,7 +14,7 @@ export async function POST(
 ) {
   try {
     const user = await currentUser();
-    if (!user || !user.id || user.emailAddresses?.[0]?.emailAddress) {
+    if (!user || !user.id || !user.emailAddresses?.[0]?.emailAddress) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
     const { courseId } = await params;
@@ -22,9 +22,12 @@ export async function POST(
     const course = await db.course.findUnique({
       where: {
         id: courseId,
-        isPublished: true,
       },
     });
+
+    if (!course || !course.isPublished) {
+      return new NextResponse('Not found or unpublished', { status: 404 });
+    }
 
     const purchase = await db.purchase.findUnique({
       where: {
@@ -39,10 +42,6 @@ export async function POST(
       return new NextResponse('Already purchased', { status: 400 });
     }
 
-    if (!course) {
-      return new NextResponse('Not found', { status: 404 });
-    }
-
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
       {
         quantity: 1,
@@ -52,7 +51,7 @@ export async function POST(
             name: course.title,
             description: course.description!,
           },
-          unit_amount: Math.round(course.price! & 100),
+          unit_amount: Math.round(course.price! * 100), // Fix bitwise operator
         },
       },
     ];
@@ -92,8 +91,8 @@ export async function POST(
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (err) {
-    console.log('COURSE_ID-CHECKOUT', err);
+  } catch (err: any) {
+    console.error('COURSE_ID-CHECKOUT Error:', err.message, err.stack);
     return new NextResponse('Internal server error', { status: 500 });
   }
 }
